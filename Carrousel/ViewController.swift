@@ -15,7 +15,7 @@ final class ViewController: UIViewController {
         return _collectionView
     }()
     
-    private var cellModels: [(cells: [CellVariant], type: SectionCompositionLayoutType)] { CellVariant.sampleCells }
+    private var cellModels: [SectionCompositionLayoutType] { CellVariant.sampleCells }
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -60,7 +60,13 @@ extension ViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        cellModels[section].cells.count
+        switch cellModels[section] {
+        case let .fullWidthInline(cells),
+            let .leadingLargeInline(cells),
+            let .products(cells),
+            let .trailingLargeInline(cells):
+            return cells.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -72,47 +78,37 @@ extension ViewController: UICollectionViewDataSource {
     }
 }
 
-extension Int {
-    var isMultipleOf8: Bool { self % 8 == .zero }
-    var isMultipleOf6: Bool { self % 7 == .zero }
-}
-
 extension ViewController {
     enum SectionCompositionLayoutType {
-        case fullWidthInline
-        case products
-        case leadingLargeInline
-        case trailingLargeInline
+        case fullWidthInline([CellVariant])
+        case products([CellVariant])
+        case leadingLargeInline([CellVariant])
+        case trailingLargeInline([CellVariant])
     }
     
     class CellVariant {
-        static var sampleCells: [(cells: [CellVariant], type: SectionCompositionLayoutType)]  {
-            var sections: [(cells: [CellVariant], type: SectionCompositionLayoutType)] = []
+        static var sampleCells: [SectionCompositionLayoutType]  {
+            var sections: [SectionCompositionLayoutType] = []
             
             // Inline with full width
             let singleSectionCell = [CellVariant()]
-            sections.append((cells: singleSectionCell,
-                             type: .fullWidthInline))
+            
+            sections.append(.fullWidthInline(singleSectionCell))
             
             // Products
-            sections.append((cells: Array(repeating: CellVariant(), count: 7),
-                             type: .products))
+            sections.append(.products(Array(repeating: CellVariant(), count: 7)))
             
             // Inline with full width
-            sections.append((cells: singleSectionCell,
-                             type: .fullWidthInline))
+            sections.append(.fullWidthInline(singleSectionCell))
             
             // Leading large inline
-            sections.append((cells: Array(repeating: CellVariant(), count: 3),
-                             type: .trailingLargeInline))
+            sections.append(.trailingLargeInline(Array(repeating: CellVariant(), count: 3)))
             
             // Products
-            sections.append((cells: Array(repeating: CellVariant(), count: 8),
-                             type: .products))
+            sections.append(.products(Array(repeating: CellVariant(), count: 8)))
             
             // Leading large inline
-            sections.append((cells: Array(repeating: CellVariant(), count: 3),
-                             type: .leadingLargeInline))
+            sections.append(.leadingLargeInline(Array(repeating: CellVariant(), count: 3)))
             
             return sections
         }
@@ -128,12 +124,7 @@ private extension ViewController {
     }
     
     private func getLayout(forSection section: Int) -> NSCollectionLayoutSection {
-//        makeLargeSection()
-//        makeHorizontalSplitWithSingleHeightSection()
-//        makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: true)
-        let sectionType = cellModels[section].type
-        
-        switch sectionType {
+        switch cellModels[section] {
         case .fullWidthInline: return makeFullWidthWithFullHeightSection()
         case .products: return makeHorizontalSplitWithSingleHeightSection()
         case .leadingLargeInline: return makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: false)
