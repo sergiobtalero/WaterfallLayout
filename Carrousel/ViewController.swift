@@ -15,9 +15,7 @@ final class ViewController: UIViewController {
         return _collectionView
     }()
     
-    private var cellModels: [CellVariant] {
-        CellVariant.sampleCells
-    }
+    private var cellModels: [(cells: [CellVariant], type: SectionCompositionLayoutType)] { CellVariant.sampleCells }
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -56,9 +54,13 @@ private extension ViewController {
 
 // MARK: - UICollectionViewDataSource
 extension ViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        cellModels.count
+    }
+    
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        cellModels.count
+        cellModels[section].cells.count
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -76,32 +78,43 @@ extension Int {
 }
 
 extension ViewController {
+    enum SectionCompositionLayoutType {
+        case fullWidthInline
+        case products
+        case leadingLargeInline
+        case trailingLargeInline
+    }
+    
     class CellVariant {
-        enum LayoutType {
-            case small
-            case large
-            case verticalLarge
-        }
-        
-        static var sampleCells: [CellVariant]  {
-            var cells: [CellVariant] = []
-            (0...100).forEach {
-                if $0.isMultipleOf8 && $0 != .zero {
-                    cells.append(CellVariant(.large))
-                } else if $0.isMultipleOf6 {
-                    cells.append(CellVariant(.verticalLarge))
-                } else {
-                    cells.append(CellVariant(.small))
-                }
-            }
-            return cells
-        }
-        
-        let layoutType: LayoutType
-        
-        // MARK: - Initializer
-        init(_ layoutType: LayoutType) {
-            self.layoutType = layoutType
+        static var sampleCells: [(cells: [CellVariant], type: SectionCompositionLayoutType)]  {
+            var sections: [(cells: [CellVariant], type: SectionCompositionLayoutType)] = []
+            
+            // Inline with full width
+            let singleSectionCell = [CellVariant()]
+            sections.append((cells: singleSectionCell,
+                             type: .fullWidthInline))
+            
+            // Products
+            sections.append((cells: Array(repeating: CellVariant(), count: 7),
+                             type: .products))
+            
+            // Inline with full width
+            sections.append((cells: singleSectionCell,
+                             type: .fullWidthInline))
+            
+            // Leading large inline
+            sections.append((cells: Array(repeating: CellVariant(), count: 3),
+                             type: .trailingLargeInline))
+            
+            // Products
+            sections.append((cells: Array(repeating: CellVariant(), count: 8),
+                             type: .products))
+            
+            // Leading large inline
+            sections.append((cells: Array(repeating: CellVariant(), count: 3),
+                             type: .leadingLargeInline))
+            
+            return sections
         }
     }
 }
@@ -114,10 +127,18 @@ private extension ViewController {
         })
     }
     
-    private func getLayout(forSection: Int) -> NSCollectionLayoutSection {
+    private func getLayout(forSection section: Int) -> NSCollectionLayoutSection {
 //        makeLargeSection()
 //        makeHorizontalSplitWithSingleHeightSection()
-        makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: true)
+//        makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: true)
+        let sectionType = cellModels[section].type
+        
+        switch sectionType {
+        case .fullWidthInline: return makeFullWidthWithFullHeightSection()
+        case .products: return makeHorizontalSplitWithSingleHeightSection()
+        case .leadingLargeInline: return makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: false)
+        case .trailingLargeInline: return makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: true)
+        }
     }
     
     private func makeFullWidthWithFullHeightSection() -> NSCollectionLayoutSection {
