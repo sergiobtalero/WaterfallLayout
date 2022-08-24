@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D407357728B6E18100C8675A /* NSCollectionLayoutItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D407357628B6E18100C8675A /* NSCollectionLayoutItem+Extensions.swift */; };
+		D407357928B6E8A500C8675A /* NSCollectionLayoutSection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D407357828B6E8A500C8675A /* NSCollectionLayoutSection+Extensions.swift */; };
 		D47B0CDD28B55B1C0021BE87 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CDC28B55B1C0021BE87 /* AppDelegate.swift */; };
 		D47B0CDF28B55B1C0021BE87 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CDE28B55B1C0021BE87 /* SceneDelegate.swift */; };
 		D47B0CE128B55B1C0021BE87 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CE028B55B1C0021BE87 /* ViewController.swift */; };
@@ -16,7 +18,7 @@
 		D47B0CF428B55B1F0021BE87 /* CarrouselTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CF328B55B1F0021BE87 /* CarrouselTests.swift */; };
 		D47B0CFE28B55B1F0021BE87 /* CarrouselUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CFD28B55B1F0021BE87 /* CarrouselUITests.swift */; };
 		D47B0D0028B55B1F0021BE87 /* CarrouselUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CFF28B55B1F0021BE87 /* CarrouselUITestsLaunchTests.swift */; };
-		D47B0D0D28B55E030021BE87 /* ReusableCellCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0D0C28B55E030021BE87 /* ReusableCellCollectionViewCell.swift */; };
+		D47B0D0D28B55E030021BE87 /* ReusableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0D0C28B55E030021BE87 /* ReusableCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D407357628B6E18100C8675A /* NSCollectionLayoutItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSCollectionLayoutItem+Extensions.swift"; sourceTree = "<group>"; };
+		D407357828B6E8A500C8675A /* NSCollectionLayoutSection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSCollectionLayoutSection+Extensions.swift"; sourceTree = "<group>"; };
 		D47B0CD928B55B1C0021BE87 /* Carrousel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Carrousel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D47B0CDC28B55B1C0021BE87 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D47B0CDE28B55B1C0021BE87 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -50,7 +54,7 @@
 		D47B0CF928B55B1F0021BE87 /* CarrouselUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarrouselUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D47B0CFD28B55B1F0021BE87 /* CarrouselUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarrouselUITests.swift; sourceTree = "<group>"; };
 		D47B0CFF28B55B1F0021BE87 /* CarrouselUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarrouselUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		D47B0D0C28B55E030021BE87 /* ReusableCellCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableCellCollectionViewCell.swift; sourceTree = "<group>"; };
+		D47B0D0C28B55E030021BE87 /* ReusableCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,11 +108,13 @@
 				D47B0CDC28B55B1C0021BE87 /* AppDelegate.swift */,
 				D47B0CDE28B55B1C0021BE87 /* SceneDelegate.swift */,
 				D47B0CE028B55B1C0021BE87 /* ViewController.swift */,
+				D407357828B6E8A500C8675A /* NSCollectionLayoutSection+Extensions.swift */,
+				D407357628B6E18100C8675A /* NSCollectionLayoutItem+Extensions.swift */,
 				D47B0CE228B55B1C0021BE87 /* Main.storyboard */,
 				D47B0CE528B55B1E0021BE87 /* Assets.xcassets */,
 				D47B0CE728B55B1E0021BE87 /* LaunchScreen.storyboard */,
 				D47B0CEA28B55B1E0021BE87 /* Info.plist */,
-				D47B0D0C28B55E030021BE87 /* ReusableCellCollectionViewCell.swift */,
+				D47B0D0C28B55E030021BE87 /* ReusableCollectionViewCell.swift */,
 			);
 			path = Carrousel;
 			sourceTree = "<group>";
@@ -261,8 +267,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D407357928B6E8A500C8675A /* NSCollectionLayoutSection+Extensions.swift in Sources */,
 				D47B0CE128B55B1C0021BE87 /* ViewController.swift in Sources */,
-				D47B0D0D28B55E030021BE87 /* ReusableCellCollectionViewCell.swift in Sources */,
+				D407357728B6E18100C8675A /* NSCollectionLayoutItem+Extensions.swift in Sources */,
+				D47B0D0D28B55E030021BE87 /* ReusableCollectionViewCell.swift in Sources */,
 				D47B0CDD28B55B1C0021BE87 /* AppDelegate.swift in Sources */,
 				D47B0CDF28B55B1C0021BE87 /* SceneDelegate.swift in Sources */,
 			);

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ReusableCellCollectionViewCell: UICollectionViewCell {
+class ReusableCollectionViewCell: UICollectionViewCell {
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
