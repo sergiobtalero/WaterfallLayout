@@ -123,8 +123,8 @@ private extension ViewController {
     }
     
     private func createLayout() -> UICollectionViewLayout{
-        UICollectionViewCompositionalLayout(sectionProvider: { [unowned self] index, _ in
-            self.getLayout(forSection: index)
+        UICollectionViewCompositionalLayout(sectionProvider: { [unowned self] section, _ in
+            self.getLayout(forSection: section)
         })
     }
     
