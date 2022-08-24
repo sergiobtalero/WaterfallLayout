@@ -9,9 +9,8 @@ import UIKit
 
 final class ViewController: UIViewController {
     private lazy var collectionView: UICollectionView  = {
-        let waterfallLayout = WaterfallLayout(cellPadding: Constants.cellPadding)
         let _collectionView = UICollectionView(frame: .zero,
-                                               collectionViewLayout: waterfallLayout)
+                                               collectionViewLayout: createLayout())
         
         return _collectionView
     }()
@@ -28,10 +27,6 @@ final class ViewController: UIViewController {
         collectionView.register(ReusableCellCollectionViewCell.self,
                                 forCellWithReuseIdentifier: "ReusableCell")
         collectionView.dataSource = self
-        
-        if let layout = collectionView.collectionViewLayout as? WaterfallLayout {
-            layout.delegate = self
-        }
     }
 }
 
@@ -39,7 +34,8 @@ final class ViewController: UIViewController {
 private extension ViewController {
     private enum Constants {
         static var cellHeight: CGFloat = 200
-        static var cellPadding: CGFloat = 4.0
+        static var cellHorizontalPadding: CGFloat = 4.0
+        static var cellVerticalPadding: CGFloat = 2.0
     }
 }
 
@@ -71,20 +67,6 @@ extension ViewController: UICollectionViewDataSource {
                                                       for: indexPath) as! ReusableCellCollectionViewCell
         cell.configure()
         return cell
-    }
-}
-
-extension ViewController: WaterfallLayoutDelegate {
-    func collectionView(_ collectionView: UICollectionView,
-                        heightForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {
-        let model = cellModels[indexPath.row]
-        
-        switch model.layoutType {
-        case .small, .large:
-            return Constants.cellHeight
-        case .verticalLarge:
-            return (Constants.cellHeight * 2) + (Constants.cellPadding * 2)
-        }
     }
 }
 
@@ -121,5 +103,87 @@ extension ViewController {
         init(_ layoutType: LayoutType) {
             self.layoutType = layoutType
         }
+    }
+}
+
+// MARK: - Layout
+private extension ViewController {
+    private func createLayout() -> UICollectionViewLayout{
+        UICollectionViewCompositionalLayout(sectionProvider: { [unowned self] index, environment in
+            self.getLayout(forSection: index)
+        })
+    }
+    
+    private func getLayout(forSection: Int) -> NSCollectionLayoutSection {
+//        makeLargeSection()
+//        makeHorizontalSplitWithSingleHeightSection()
+        makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: true)
+    }
+    
+    private func makeFullWidthWithFullHeightSection() -> NSCollectionLayoutSection {
+        let largeItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                   heightDimension: .fractionalHeight(1.0))
+        let largeItem = NSCollectionLayoutItem(layoutSize: largeItemSize)
+        largeItem.contentInsets = NSDirectionalEdgeInsets(top: Constants.cellVerticalPadding,
+                                                          leading: Constants.cellHorizontalPadding,
+                                                          bottom: Constants.cellVerticalPadding,
+                                                          trailing: Constants.cellHorizontalPadding)
+        
+        let largeGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                    heightDimension: .absolute(Constants.cellHeight))
+        let largeGroup = NSCollectionLayoutGroup.horizontal(layoutSize: largeGroupSize,
+                                                            subitems: [largeItem])
+        return NSCollectionLayoutSection(group: largeGroup)
+    }
+    
+    private func makeHorizontalSplitWithSingleHeightSection() -> NSCollectionLayoutSection {
+        let smallItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5),
+                                                   heightDimension: .fractionalHeight(1.0))
+        let smallItem = NSCollectionLayoutItem(layoutSize: smallItemSize)
+        smallItem.contentInsets = NSDirectionalEdgeInsets(top: Constants.cellVerticalPadding,
+                                                          leading: Constants.cellHorizontalPadding,
+                                                          bottom: Constants.cellVerticalPadding,
+                                                          trailing: Constants.cellHorizontalPadding)
+        
+        let smallGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                    heightDimension: .absolute(Constants.cellHeight))
+        let smallGroup = NSCollectionLayoutGroup.horizontal(layoutSize: smallGroupSize,
+                                                            subitems: [smallItem])
+        
+        return NSCollectionLayoutSection(group: smallGroup)
+    }
+    
+    private func makeHorizontalSplitWithDoubleHeightSection(alignedAtTrailing: Bool) -> NSCollectionLayoutSection {
+        // MAIN ITEM AT LEFT
+        let mainItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5),
+                                                  heightDimension: .fractionalHeight(1.0))
+        let mainItem = NSCollectionLayoutItem(layoutSize: mainItemSize)
+        mainItem.contentInsets = NSDirectionalEdgeInsets(top: Constants.cellVerticalPadding,
+                                                         leading: Constants.cellHorizontalPadding,
+                                                         bottom: Constants.cellVerticalPadding,
+                                                         trailing: Constants.cellHorizontalPadding)
+        
+        // 2x1 at Right
+        let pairItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                  heightDimension: .fractionalHeight(0.5))
+        let pairItem = NSCollectionLayoutItem(layoutSize: pairItemSize)
+        pairItem.contentInsets = NSDirectionalEdgeInsets(top: Constants.cellVerticalPadding,
+                                                         leading: Constants.cellHorizontalPadding,
+                                                         bottom: Constants.cellVerticalPadding,
+                                                         trailing: Constants.cellHorizontalPadding)
+        
+        let containerGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5),
+                                                       heightDimension: .fractionalHeight(1.0))
+        let containerGroup = NSCollectionLayoutGroup.vertical(layoutSize: containerGroupSize,
+                                                             subitem: pairItem,
+                                                             count: 2)
+        
+        // Full item
+        let mainGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                   heightDimension: .absolute(Constants.cellHeight * 2))
+        let mainGroup = NSCollectionLayoutGroup.horizontal(layoutSize: mainGroupSize,
+                                                           subitems: alignedAtTrailing ? [containerGroup, mainItem] : [mainItem, containerGroup])
+        
+        return NSCollectionLayoutSection(group: mainGroup)
     }
 }
