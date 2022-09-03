@@ -9,8 +9,17 @@ import UIKit
 
 final class ViewController: UIViewController {
     private lazy var collectionView: UICollectionView  = {
+        let layout = WaterfallLayout()
+        layout.delegate = self
+        layout.minimumLineSpacing = Constants.sectionInset
+        layout.minimumInteritemSpacing = Constants.interItemSpacing
+        layout.sectionInset = .init(top: Constants.cellHorizontalPadding,
+                                    left: Constants.cellHorizontalPadding,
+                                    bottom: Constants.cellHorizontalPadding,
+                                    right: Constants.cellHorizontalPadding)
+        
         let _collectionView = UICollectionView(frame: .zero,
-                                               collectionViewLayout: createLayout())
+                                               collectionViewLayout: layout)
         _collectionView.register(ReusableCollectionViewCell.self,
                                 forCellWithReuseIdentifier: "ReusableCell")
         _collectionView.dataSource = self
@@ -24,7 +33,7 @@ final class ViewController: UIViewController {
               trailing: Constants.cellHorizontalPadding)
     }()
     
-    private var cellModels: [CollectionCellType] { CellVariant.sampleCells }
+    private var sections: [[CollectionCellType]] { CellVariant.sampleSections }
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -39,6 +48,8 @@ private extension ViewController {
         static var cellHeight: CGFloat = 200
         static var cellHorizontalPadding: CGFloat = 4.0
         static var cellVerticalPadding: CGFloat = 2.0
+        static var sectionInset: CGFloat = 10.0
+        static var interItemSpacing: CGFloat = 10.0
     }
 }
 
@@ -48,6 +59,7 @@ private extension ViewController {
         view.addSubview(collectionView)
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.dataSource = self
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -57,21 +69,41 @@ private extension ViewController {
     }
 }
 
+// MARK: - Cells Types
+extension ViewController {
+    private enum CollectionCellType {
+        case single
+        case twoColumnsOneRow
+        case oneColumnTwoRows
+        case twoColumnsTwoRows
+    }
+    
+    private class CellVariant {
+        fileprivate static var sampleSections: [[CollectionCellType]]  {
+            var sections: [[CollectionCellType]] = []
+            
+            sections.append([CollectionCellType.twoColumnsOneRow])
+            
+            var newSection: [CollectionCellType] = []
+            newSection.append(contentsOf: Array(repeating: .single, count: 6))
+            newSection.append(.oneColumnTwoRows)
+            newSection.append(contentsOf: Array(repeating: .single, count: 6))
+            sections.append(newSection)
+            
+            return sections
+        }
+    }
+}
+
 // MARK: - UICollectionViewDataSource
 extension ViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        cellModels.count
+        sections.count
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        switch cellModels[section] {
-        case let .fullWidthInline(cells),
-            let .leadingLargeInline(cells),
-            let .products(cells),
-            let .trailingLargeInline(cells):
-            return cells.count
-        }
+        sections[section].count
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -83,68 +115,33 @@ extension ViewController: UICollectionViewDataSource {
     }
 }
 
-extension ViewController {
-    private class CellVariant {
-        fileprivate static var sampleCells: [CollectionCellType]  {
-            var sections: [CollectionCellType] = []
-            
-            // Inline with full width
-            let singleSectionCell = [CellVariant()]
-            
-            sections.append(.fullWidthInline(singleSectionCell))
-            
-            // Products
-            sections.append(.products(Array(repeating: CellVariant(), count: 7)))
-            
-            // Inline with full width
-            sections.append(.fullWidthInline(singleSectionCell))
-            
-            // Leading large inline
-            sections.append(.trailingLargeInline(Array(repeating: CellVariant(), count: 3)))
-            
-            // Products
-            sections.append(.products(Array(repeating: CellVariant(), count: 8)))
-            
-            // Leading large inline
-            sections.append(.leadingLargeInline(Array(repeating: CellVariant(), count: 3)))
-            
-            return sections
+// MARK: - Layout
+extension ViewController: WaterfallLayoutDelegate {
+    func collectionViewLayout(for section: Int) -> WaterfallLayout.Layout {
+        if sections[section].count == 1 {
+            return .flow(column: 1)
+        } else {
+            return .waterfall(column: 2, distributionMethod: .balanced)
         }
     }
-}
-
-// MARK: - Layout
-private extension ViewController {
-    private enum CollectionCellType {
-        case fullWidthInline([CellVariant])
-        case products([CellVariant])
-        case leadingLargeInline([CellVariant])
-        case trailingLargeInline([CellVariant])
-    }
     
-    private func createLayout() -> UICollectionViewLayout{
-        UICollectionViewCompositionalLayout(sectionProvider: { [unowned self] section, _ in
-            self.getLayout(forSection: section)
-        })
-    }
-    
-    private func getLayout(forSection section: Int) -> NSCollectionLayoutSection {
-        switch cellModels[section] {
-        case .fullWidthInline:
-            return NSCollectionLayoutSection.makeHorizontalSection(cellHeight: .absolute(Constants.cellHeight),
-                                                                   contentInsets: collectionCellInsets)
-        case .products:
-            return NSCollectionLayoutSection.makeHorizontalSection(fractionalWidth: .fractionalWidth(0.5),
-                                                                   cellHeight: .absolute(Constants.cellHeight),
-                                                                   contentInsets: collectionCellInsets)
-        case .leadingLargeInline:
-            return NSCollectionLayoutSection.makeHorizontalSplitWithDoubleHeightSection(cellHeight: .absolute(Constants.cellHeight * 2),
-                                                                                        contentInsets: collectionCellInsets,
-                                                                                        alignment: .leading)
-        case .trailingLargeInline:
-            return NSCollectionLayoutSection.makeHorizontalSplitWithDoubleHeightSection(cellHeight: .absolute(Constants.cellHeight * 2),
-                                                                                        contentInsets: collectionCellInsets,
-                                                                                        alignment: .trailing)
+    func collectionView(_ collectionView: UICollectionView,
+                        layout: WaterfallLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let insets = collectionView.contentInset
+        let fullCellWidth = collectionView.bounds.size.width - insets.left - insets.right
+        let halfCellWidth = fullCellWidth / 2 - Constants.interItemSpacing
+        let cellHeight: CGFloat = 150
+        
+        switch sections[indexPath.section][indexPath.row] {
+        case .single:
+            return CGSize(width: halfCellWidth, height: cellHeight)
+        case .oneColumnTwoRows:
+            return CGSize(width: halfCellWidth, height: cellHeight * 2)
+        case .twoColumnsTwoRows:
+            return CGSize(width: fullCellWidth, height: cellHeight * 2)
+        case .twoColumnsOneRow:
+            return CGSize(width: fullCellWidth, height: cellHeight)
         }
     }
 }

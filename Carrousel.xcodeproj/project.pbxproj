@@ -19,6 +19,7 @@
 		D47B0CFE28B55B1F0021BE87 /* CarrouselUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CFD28B55B1F0021BE87 /* CarrouselUITests.swift */; };
 		D47B0D0028B55B1F0021BE87 /* CarrouselUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0CFF28B55B1F0021BE87 /* CarrouselUITestsLaunchTests.swift */; };
 		D47B0D0D28B55E030021BE87 /* ReusableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47B0D0C28B55E030021BE87 /* ReusableCollectionViewCell.swift */; };
+		D4DC665728C2EDDE00035EBB /* ExpressLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DC665628C2EDDE00035EBB /* ExpressLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		D47B0CFD28B55B1F0021BE87 /* CarrouselUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarrouselUITests.swift; sourceTree = "<group>"; };
 		D47B0CFF28B55B1F0021BE87 /* CarrouselUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarrouselUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D47B0D0C28B55E030021BE87 /* ReusableCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableCollectionViewCell.swift; sourceTree = "<group>"; };
+		D4DC665628C2EDDE00035EBB /* ExpressLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				D47B0CE728B55B1E0021BE87 /* LaunchScreen.storyboard */,
 				D47B0CEA28B55B1E0021BE87 /* Info.plist */,
 				D47B0D0C28B55E030021BE87 /* ReusableCollectionViewCell.swift */,
+				D4DC665628C2EDDE00035EBB /* ExpressLayout.swift */,
 			);
 			path = Carrousel;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 				D407358228B6EAC700C8675A /* NSCollectionLayoutSection+Extensions.swift in Sources */,
 				D47B0CE128B55B1C0021BE87 /* ViewController.swift in Sources */,
 				D407358128B6EAC700C8675A /* NSCollectionLayoutItem+Extensions.swift in Sources */,
+				D4DC665728C2EDDE00035EBB /* ExpressLayout.swift in Sources */,
 				D47B0D0D28B55E030021BE87 /* ReusableCollectionViewCell.swift in Sources */,
 				D47B0CDD28B55B1C0021BE87 /* AppDelegate.swift in Sources */,
 				D47B0CDF28B55B1C0021BE87 /* SceneDelegate.swift in Sources */,
